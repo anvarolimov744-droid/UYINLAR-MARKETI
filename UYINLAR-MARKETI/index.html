@@ -1,0 +1,526 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101a16">
+<title>UYINLAR MARKETI</title>
+<style>
+:root {
+  --bg:#0c120f;
+  --panel:#141d18;
+  --panel2:#1b2821;
+  --text:#f0f7f2;
+  --muted:#9aaba0;
+  --green:#67df91;
+  --line:#29372e;
+  --danger:#ff7979;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+}
+button,input,textarea,select { font:inherit; }
+button { cursor:pointer; }
+.topbar {
+  position:sticky;top:0;z-index:10;
+  display:flex;align-items:center;gap:16px;
+  padding:15px max(18px,calc((100% - 1250px)/2));
+  background:rgba(12,18,15,.96);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(15px);
+}
+.brand {
+  display:flex;align-items:center;gap:10px;
+  font-weight:800;font-size:19px;white-space:nowrap;
+}
+.logo {
+  display:grid;place-items:center;
+  width:39px;height:39px;border-radius:13px;
+  background:var(--green);color:#0b1710;font-size:23px;
+}
+.search { flex:1;position:relative; }
+.search input {
+  width:100%;padding:13px 16px 13px 43px;
+  border-radius:15px;border:1px solid var(--line);
+  background:var(--panel);color:var(--text);outline:none;
+}
+.search input:focus { border-color:var(--green); }
+.search span { position:absolute;left:15px;top:12px; }
+.btn {
+  border:0;border-radius:13px;padding:12px 16px;
+  background:var(--green);color:#102017;font-weight:800;
+}
+.btn.secondary {
+  background:var(--panel2);color:var(--text);
+  border:1px solid var(--line);
+}
+main { max-width:1250px;margin:auto;padding:25px 20px 80px; }
+.hero {
+  padding:30px;border:1px solid #2c4835;border-radius:24px;
+  background:radial-gradient(ellipse at 90% 10%,#31583c 0,transparent 50%),
+             linear-gradient(130deg,#182b20,#121a16 65%);
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+}
+.hero h1 { font-size:clamp(27px,4vw,43px);margin:0 0 12px; }
+.hero p { color:#c1d3c6;line-height:1.7;max-width:550px;margin:0 0 20px; }
+.hero-icon { font-size:clamp(60px,10vw,110px); }
+.section-head {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin:29px 0 16px;flex-wrap:wrap;
+}
+.section-head h2 { font-size:21px;margin:0; }
+.muted { color:var(--muted);font-size:13px; }
+.chips { display:flex;gap:9px;overflow:auto;padding:2px 0 8px; }
+.chip {
+  white-space:nowrap;padding:10px 14px;border-radius:999px;
+  border:1px solid var(--line);background:var(--panel);
+  color:var(--text);
+}
+.chip.active { background:var(--green);color:#102017;border-color:var(--green);font-weight:bold; }
+.grid {
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px;
+}
+.card {
+  min-width:0;background:var(--panel);border:1px solid var(--line);
+  border-radius:18px;overflow:hidden;cursor:pointer;transition:.2s;
+}
+.card:hover { transform:translateY(-4px);border-color:#52785d; }
+.cover {
+  height:155px;display:grid;place-items:center;
+  background:linear-gradient(135deg,#203d2b,#24344b);
+  overflow:hidden;font-size:52px;
+}
+.cover img { width:100%;height:100%;object-fit:cover; }
+.card-info { padding:14px; }
+.card-info h3 { margin:0 0 7px;font-size:16px;overflow-wrap:anywhere; }
+.card-info p {
+  color:var(--muted);font-size:12px;line-height:1.5;
+  margin:0 0 12px;min-height:30px;
+}
+.card-foot { display:flex;justify-content:space-between;align-items:center;gap:7px; }
+.tag {
+  display:inline-block;background:var(--panel2);border-radius:8px;
+  padding:6px 8px;color:#c9e4d0;font-size:11px;
+}
+.open-btn {
+  border:0;background:transparent;color:var(--green);font-weight:bold;
+}
+.empty {
+  padding:50px 20px;text-align:center;color:var(--muted);
+  border:1px dashed var(--line);border-radius:18px;
+}
+.notice { color:var(--muted);font-size:12px;line-height:1.6;margin-top:20px; }
+.overlay {
+  position:fixed;inset:0;z-index:30;display:none;
+  align-items:center;justify-content:center;padding:16px;
+  background:#000b;overflow:auto;
+}
+.overlay.show { display:flex; }
+.dialog {
+  width:min(620px,100%);max-height:92vh;overflow:auto;
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:22px;padding:23px;
+}
+.dialog h2 { margin:0 0 18px; }
+.form-grid { display:grid;grid-template-columns:1fr 1fr;gap:13px; }
+.field { display:flex;flex-direction:column;gap:7px;min-width:0; }
+.field.full { grid-column:1/-1; }
+.field label { font-size:13px;color:#c4d4c8; }
+.field input,.field textarea,.field select {
+  width:100%;border:1px solid var(--line);background:#0c130f;
+  color:var(--text);border-radius:11px;padding:12px;outline:none;
+}
+.field textarea { resize:vertical;min-height:95px; }
+.field input:focus,.field textarea:focus,.field select:focus {
+  border-color:var(--green);
+}
+.actions { display:flex;justify-content:flex-end;gap:10px;margin-top:18px;flex-wrap:wrap; }
+.detail-cover {
+  height:220px;border-radius:15px;overflow:hidden;
+  background:var(--panel2);display:grid;place-items:center;
+  font-size:65px;margin-bottom:18px;
+}
+.detail-cover img { width:100%;height:100%;object-fit:cover; }
+.detail-description { color:#c4d4c8;white-space:pre-wrap;line-height:1.7;overflow-wrap:anywhere; }
+.toast {
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+  background:#e2ffeb;color:#102017;padding:13px 18px;border-radius:12px;
+  z-index:50;display:none;max-width:90%;font-weight:bold;
+}
+.toast.show { display:block; }
+@media(max-width:950px) {
+  .grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+@media(max-width:650px) {
+  .topbar { flex-wrap:wrap;gap:10px;padding:12px; }
+  .brand { font-size:16px; }
+  .search { order:3;flex-basis:100%; }
+  .topbar .btn { margin-left:auto;padding:10px 12px; }
+  main { padding:17px 13px 55px; }
+  .hero { padding:22px 18px; }
+  .hero-icon { display:none; }
+  .grid { grid-template-columns:repeat(2,minmax(0,1fr));gap:10px; }
+  .cover { height:120px; }
+  .card-info { padding:11px; }
+  .card-info h3 { font-size:14px; }
+  .card-info p { font-size:11px; }
+  .form-grid { grid-template-columns:1fr; }
+  .field.full { grid-column:auto; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><span class="logo">🎮</span> UYINLAR MARKETI</div>
+  <div class="search">
+    <span>🔍</span>
+    <input id="search" type="search" placeholder="O‘yinlarni qidirish...">
+  </div>
+  <button class="btn" id="addOpen">＋ O‘yin qo‘shish</button>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <h1>Sevimli o‘yiningni top! 🎮</h1>
+      <p>O‘yinlarni kashf et, katalogni ko‘rib chiq va o‘z o‘yiningni ham boshqalar bilan ulash.</p>
+      <button class="btn" id="browse">O‘yinlarni ko‘rish ↓</button>
+    </div>
+    <div class="hero-icon">🕹️</div>
+  </section>
+
+  <div class="section-head">
+    <h2>Kategoriyalar</h2>
+    <span class="muted" id="count">Yuklanmoqda...</span>
+  </div>
+  <div class="chips" id="categories"></div>
+
+  <div class="section-head" id="catalog">
+    <h2>🎯 O‘yinlar katalogi</h2>
+    <select id="platform" class="chip" aria-label="Platforma">
+      <option value="Barchasi">Barcha platformalar</option>
+      <option>Android</option>
+      <option>PC</option>
+      <option>Brauzer</option>
+    </select>
+  </div>
+
+  <div id="games" class="grid"></div>
+  <div id="empty" class="empty" hidden>
+    <div style="font-size:40px">🎮</div>
+    <h3>Hozircha o‘yin topilmadi</h3>
+    <p>Boshqa so‘z bilan qidiring yoki birinchi o‘yinni qo‘shing.</p>
+    <button class="btn" id="emptyAdd">＋ O‘yin qo‘shish</button>
+  </div>
+
+  <p class="notice">
+    Eslatma: o‘yinlarni faqat o‘zingiz tarqatishga haqli bo‘lgan fayllar yoki
+    rasmiy havolalar orqali ulashing. Yuklab olingan fayllarni o‘rnatishdan
+    oldin tekshiring.
+  </p>
+</main>
+
+<!-- O'yin qo'shish -->
+<div class="overlay" id="addModal">
+  <section class="dialog">
+    <h2>➕ Yangi o‘yin qo‘shish</h2>
+    <form id="gameForm">
+      <div class="form-grid">
+        <div class="field full">
+          <label for="title">O‘yin nomi *</label>
+          <input id="title" name="title" required minlength="2" maxlength="70"
+                 placeholder="Masalan, Mening poyga o‘yinim">
+        </div>
+        <div class="field">
+          <label for="category">Kategoriya *</label>
+          <select id="category" name="category" required>
+            <option>Ekshen</option><option>Poyga</option>
+            <option>Sarguzasht</option><option>Strategiya</option>
+            <option>Sport</option><option>Boshqotirma</option><option>Boshqa</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="platformChoice">Platforma *</label>
+          <select id="platformChoice" name="platform" required>
+            <option>Android</option><option>PC</option><option>Brauzer</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="description">O‘yin tavsifi</label>
+          <textarea id="description" name="description" maxlength="2000"
+                    placeholder="O‘yin haqida qisqacha yozing..."></textarea>
+        </div>
+        <div class="field full">
+          <label for="cover">O‘yin rasmi (JPG, PNG, WEBP; 100 MB gacha)</label>
+          <input id="cover" name="cover" type="file"
+                 accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+        </div>
+        <div class="field full">
+          <label for="gameFile">O‘yin fayli (ZIP, APK yoki HTML; 100 MB gacha)</label>
+          <input id="gameFile" name="gameFile" type="file"
+                 accept=".zip,.apk,.html">
+        </div>
+        <div class="field full">
+          <label for="url">Yoki yuklab olish havolasi</label>
+          <input id="url" name="url" type="url"
+                 placeholder="https://...">
+        </div>
+      </div>
+      <p class="notice">O‘yin faylini yuklash o‘rniga rasmiy havola ham kiritishingiz mumkin.</p>
+      <div class="actions">
+        <button type="button" class="btn secondary" data-close="addModal">Bekor qilish</button>
+        <button type="submit" class="btn" id="submitGame">O‘yinni qo‘shish</button>
+      </div>
+    </form>
+  </section>
+</div>
+
+<!-- O'yin tafsilotlari -->
+<div class="overlay" id="detailModal">
+  <section class="dialog">
+    <div id="detailContent"></div>
+    <div class="actions">
+      <button class="btn secondary" data-close="detailModal">Yopish</button>
+      <a id="downloadBtn" class="btn" href="#" style="text-decoration:none">⬇ Yuklab olish</a>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const categories = [
+  "Barchasi", "Ekshen", "Poyga", "Sarguzasht",
+  "Strategiya", "Sport", "Boshqotirma", "Boshqa"
+];
+let selectedCategory = "Barchasi";
+let games = [];
+let toastTimer;
+
+function toast(message) {
+  $("toast").textContent = message;
+  $("toast").classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $("toast").classList.remove("show"), 3200);
+}
+
+function showModal(id) {
+  $(id).classList.add("show");
+}
+
+function closeModal(id) {
+  $(id).classList.remove("show");
+}
+
+document.querySelectorAll("[data-close]").forEach(button => {
+  button.addEventListener("click", () => closeModal(button.dataset.close));
+});
+
+document.querySelectorAll(".overlay").forEach(overlay => {
+  overlay.addEventListener("click", event => {
+    if (event.target === overlay) closeModal(overlay.id);
+  });
+});
+
+$("addOpen").onclick = () => showModal("addModal");
+$("emptyAdd").onclick = () => showModal("addModal");
+$("browse").onclick = () => $("catalog").scrollIntoView({behavior:"smooth"});
+
+function renderCategories() {
+  $("categories").replaceChildren();
+
+  categories.forEach(category => {
+    const button = document.createElement("button");
+    button.className = "chip" + (selectedCategory === category ? " active" : "");
+    button.textContent = category;
+    button.onclick = () => {
+      selectedCategory = category;
+      renderCategories();
+      loadGames();
+    };
+    $("categories").appendChild(button);
+  });
+}
+
+function makeCover(game) {
+  const cover = document.createElement("div");
+  cover.className = "cover";
+
+  if (game.cover) {
+    const img = document.createElement("img");
+    img.src = game.cover;
+    img.alt = game.title;
+    img.loading = "lazy";
+    img.onerror = () => { img.remove(); cover.textContent = "🎮"; };
+    cover.appendChild(img);
+  } else {
+    cover.textContent = "🎮";
+  }
+
+  return cover;
+}
+
+function makeCard(game) {
+  const card = document.createElement("article");
+  card.className = "card";
+  card.tabIndex = 0;
+  card.setAttribute("role", "button");
+  card.setAttribute("aria-label", game.title + " tafsilotlarini ko‘rish");
+
+  card.appendChild(makeCover(game));
+
+  const info = document.createElement("div");
+  info.className = "card-info";
+
+  const title = document.createElement("h3");
+  title.textContent = game.title;
+
+  const description = document.createElement("p");
+  description.textContent = game.description || "O‘yin haqida batafsil ma’lumot.";
+
+  const foot = document.createElement("div");
+  foot.className = "card-foot";
+
+  const tag = document.createElement("span");
+  tag.className = "tag";
+  tag.textContent = game.platform;
+
+  const open = document.createElement("span");
+  open.className = "open-btn";
+  open.textContent = "Ko‘rish →";
+
+  foot.append(tag, open);
+  info.append(title, description, foot);
+  card.appendChild(info);
+
+  card.onclick = () => showDetails(game);
+  card.onkeydown = event => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      showDetails(game);
+    }
+  };
+
+  return card;
+}
+
+function renderGames(list) {
+  $("games").replaceChildren();
+  $("count").textContent = list.length + " ta o‘yin";
+  $("empty").hidden = list.length !== 0;
+  $("games").hidden = list.length === 0;
+
+  list.forEach(game => $("games").appendChild(makeCard(game)));
+}
+
+async function loadGames() {
+  $("count").textContent = "Yuklanmoqda...";
+
+  const params = new URLSearchParams();
+  params.set("q", $("search").value.trim());
+  params.set("category", selectedCategory);
+  params.set("platform", $("platform").value);
+
+  try {
+    const response = await fetch("/api/games?" + params.toString());
+    if (!response.ok) throw new Error("Server xatosi");
+
+    games = await response.json();
+    renderGames(games);
+  } catch (error) {
+    $("count").textContent = "Ulanish xatosi";
+    $("games").replaceChildren();
+    $("empty").hidden = false;
+    $("empty").querySelector("h3").textContent = "Serverga ulanib bo‘lmadi";
+    $("empty").querySelector("p").textContent =
+      "Serverni ishga tushiring va sahifani qayta yuklang.";
+    console.error(error);
+  }
+}
+
+function showDetails(game) {
+  $("detailContent").replaceChildren();
+
+  const cover = makeCover(game);
+  cover.className = "detail-cover";
+  $("detailContent").appendChild(cover);
+
+  const title = document.createElement("h2");
+  title.textContent = game.title;
+
+  const meta = document.createElement("p");
+  meta.className = "muted";
+  meta.textContent = game.category + " · " + game.platform;
+
+  const desc = document.createElement("p");
+  desc.className = "detail-description";
+  desc.textContent = game.description || "Tavsif kiritilmagan.";
+
+  const date = document.createElement("p");
+  date.className = "muted";
+  date.textContent = "Qo‘shilgan sana: " +
+    new Date(game.createdAt).toLocaleDateString("uz-UZ");
+
+  $("detailContent").append(title, meta, desc, date);
+
+  const download = $("downloadBtn");
+  download.href = "/api/games/" + encodeURIComponent(game.id) + "/download";
+  download.style.display = game.fileName || game.url ? "inline-block" : "none";
+  download.removeAttribute("target");
+
+  showModal("detailModal");
+}
+
+$("search").addEventListener("input", loadGames);
+$("platform").addEventListener("change", loadGames);
+
+$("gameForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const form = $("gameForm");
+  const button = $("submitGame");
+  const formData = new FormData(form);
+
+  button.disabled = true;
+  button.textContent = "Yuklanmoqda...";
+
+  try {
+    const response = await fetch("/api/games", {
+      method: "POST",
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "O‘yinni qo‘shib bo‘lmadi.");
+    }
+
+    form.reset();
+    closeModal("addModal");
+    selectedCategory = "Barchasi";
+    renderCategories();
+    $("search").value = "";
+    $("platform").value = "Barchasi";
+
+    await loadGames();
+    toast("✅ O‘yin marketga qo‘shildi!");
+  } catch (error) {
+    toast("❌ " + error.message);
+  } finally {
+    button.disabled = false;
+    button.textContent = "O‘yinni qo‘shish";
+  }
+});
+
+renderCategories();
+loadGames();
+</script>
+</body>
+</html>
